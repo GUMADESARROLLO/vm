@@ -1,9 +1,9 @@
 <main class="container">
 	<span class="totales">TRANSACCIONES REALIZADAS</span><?php if($this->session->userdata('rol')==3) echo '<span class="totales">&nbspPOR&nbsp</span> <span class="totales" id="nomUser"> </span>'?>
 	<div class="divider"></div><br>
-	
 
-	
+
+
 	<div class="row">
 
 		<div class="card">
@@ -11,7 +11,7 @@
 				<div class="row">
 					<div class="col s12 m4">
 						<div class="input-group" style="margin-top: 17px">
-							 <input type="text" class="form-control" id="txtBuscarTransaccionClientes" placeholder="Buscar transacciones">
+							 <input type="text" class="form-control clssIMPUT" id="txtBuscarTransaccionClientes" placeholder="Buscar transacciones">
 						</div>
 			    	</div>
 
@@ -88,11 +88,10 @@
 		    	<div class="col12">
 		    		<div>Seleccione el Cliente</div>
 		    		<div class="input-group" >
-						<input type="text" class="form-control" id="txtCLienteNewFact" placeholder="Cliente"/>
-						<div class="row" style="position: absolute;margin-top: 40px" >
-						<div class="col s12 m6" >
-							<div  id="resultClte" ></div>
-						</div>
+                        <select class="chosen-select browser-default" id="ListCliente">
+                            <option value="" disabled selected>...</option>
+                            <?php foreach($arClientes as $Cln) echo '<option value="'.$Cln['CLIENTE'].'">'.$Cln['CLIENTE'].' - '.$Cln['NOMBRE'].'</option>'; ?>
+                        </select>
 					</div>
 		  			</div>
 		    	</div>
@@ -100,7 +99,7 @@
 		    		<div class="row">
 		    			<div class="col m12">
 			    			<div class="col m2 l1"><span>Dirección: </span></div>
-			    			<div class="col m10 l11"> <span id="labelDirCrearPedido"></span></div>
+			    			<div class="col m10 l11"> <span id="labelDirCrearPedido">XD</span></div>
 		    			</div>
 
 
@@ -158,35 +157,31 @@
 		  			
 		    	</div>
 		    </div>
-
+        <div class="row">
+            <span>Seleccione el Producto</span>
+            <select class="chosen-select browser-default" name="Articulo" id="ListArticulo">
+                <option value="" disabled selected>...</option>
+                <?php foreach($arArticulos as $Art) echo '<option value="'.$Art['ARTICULO'].'">'.$Art['ARTICULO'].' - '.$Art['DESCRIPCION'].'</option>'; ?>
+            </select>
+        </div>
 	    	<div class="row">
 		    	<div class="col s12 m4">
-		    		<div>Seleccione el Producto</div>
-		    		<div class="input-group">
-						<input  id="productos"/>
-						<div class="row" style="position: absolute;margin-top: 40px" >
-						<div class="col s12 m7" >
-							<div  id="result" ></div>
-						</div>
-					</div>
-		  			</div>
+                    <div class="Seleccione el Producto">Cantidad: </div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="txtCantidad" placeholder="Cantidad"/>
+                    </div>
 		    	</div>
-		    	
 		    	<div class="col s12 m2">
-		    		<div class="Seleccione el Producto">Precio</div>
+		    		<div class="Seleccione el Producto">Precio C$.:</div>
 		    		<div class="input-group">
 		  				<input type="text" class="form-control" id="txtPrecio" placeholder="Precio"/>
 		  			</div>
 		    	</div>
 		    	<div class="col s12 m2">
 		    		<div class="Seleccione el Producto">Bonificación</div>
-		  				<select  id="selectBonif">
+
+		  				<select  id="slcCantidad">
 		  					<option value="0">Elegir</option>
-		  					<option value="100+10">100+10</option>
-		  					<option value="6+1">6+1</option>
-		  					<option value="6+1">15+3</option>
-		  					<option value="30+8">30+8</option>
-		  					<option value="50+13">50+13</option>
 		  				</select>
 		    	</div>
 		    	<div class="col s12 m2">
