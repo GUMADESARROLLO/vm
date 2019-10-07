@@ -73,8 +73,11 @@ $route['getSelectedSellingDetailData/(:any)'] = 'ventasTerceros_controller/getSe
 $route['cambiarEstadoVentas/(:any)/(:any)'] = 'ventasTerceros_controller/cambiarEstadoVentas/$1/$2';
 $route['NomUsuarioActual'] = 'ventasTerceros_controller/NomUsuarioActual';
 $route['filtrarxfechaCliente'] = 'ventasTerceros_controller/filtrarxfechaCliente';
-$route['listandoClientes/(:any)'] =  'ventasTerceros_controller/listandoClientes/$1';
+$route['listandoClientes'] =  'ventasTerceros_controller/listandoClientes/';
 $route['datosCreditoClte'] =  'ventasTerceros_controller/datosCreditoClte';
+
+$route['InfoCliente/(:any)'] = 'ventasTerceros_controller/getInfoCliente/$1';
+$route['InfoArticul/(:any)'] = 'ventasTerceros_controller/getInfoArticul/$1';
 
 /*RUTA: VISUALIZAR VENTAS AGREGADAS DESDE EL SISTEMA*/
 $route['verVentasSist'] = 'verVentasSist_controller';

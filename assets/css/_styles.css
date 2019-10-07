@@ -161,7 +161,7 @@
 /*FIN ESTILO DATATABLE*/
 
 /*INPUT*/
-#productos, #buscar, #txtBuscar, #txtBuscarClteProd, #txtCantidad, #txtCLienteNewFact, #txtContactNewFact, #buscar3M, #txtBuscarMed, #txtBuscarTransaccion, #txtBuscarFarm, #txtBuscarRpt {
+#productos, #buscar, #txtBuscar, #txtBuscarClteProd, #txtCantidad,#txtPrecio, #txtCLienteNewFact, #txtContactNewFact, #buscar3M, #txtBuscarMed, #txtBuscarTransaccion, #txtBuscarFarm, #txtBuscarRpt {
   height: 42px;
   width: 100%;
   padding: 0px 10px;
@@ -457,3 +457,6 @@
 }
 
 
+.DrawBorder{
+    border: solid 2px black;
+}

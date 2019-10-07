@@ -1,12 +1,40 @@
  <script type="text/javascript">
+
 $(document).ready(function() {
 
- 
+    $( "#ListCliente").change(function() {
+        var Cls = $(this).val();
+        $.getJSON('InfoCliente/' + Cls, function(data){
+            $("#labelDirCrearPedido").html(data['data'][0].DIR);
+            $("#limitCredCrearPedido").html(data['data'][0].CRE);
+            $("#saldoCrearPedido").html(data['data'][0].SAL);
+            $("#DispondCrearPedido").html(data['data'][0].DIS);
+        });
+    });
+
+    $( "#ListArticulo").change(function() {
+        var Art  = $(this).val();
+        $.getJSON('InfoArticul/' + Art, function(data){
+            $("#txtPrecio").val(data['data'][0].PRE);
+            $("#txtCantidad").val(data['data'][0].EXI);
+
+            var res = data['data'][0].REG;
+            var select = $('#slcCantidad');
+            res = res.split(",");
+
+            $.each(res, function (ind, elem) {
+                select.append( '<option value="'+elem+'">'+elem+'</option>' )
+            } );
+
+
+
+        });
+    });
 
   /*INICIALIZAR MODAL*/
   $('.modal').modal();
 
- 
+
 
   $('#tblDetVntTerceros,#tblVerDetVntTerceros').DataTable(
     {
@@ -29,12 +57,12 @@ $(document).ready(function() {
           "lengthMenu":"Mostrar _MENU_",
 
           "emptyTable": "No hay datos disponibles en la tabla",
-          "search":     "" 
+          "search":     ""
         },
          "columnDefs": [
         {"className": "dt-center", "targets": "_all"}
       ],
-      
+
     }
   );
 
@@ -58,7 +86,7 @@ $(document).ready(function() {
           "lengthMenu":"Mostrar _MENU_",
 
           "emptyTable": "No hay datos disponibles en la tabla",
-          "search":     "" 
+          "search":     ""
         },
         columns: [
                         { 'title': 'FECHA VENTA' },
@@ -72,17 +100,17 @@ $(document).ready(function() {
          "columnDefs": [
         {"className": "dt-center", "targets": "_all"}
       ],
-      "createdRow": 
+      "createdRow":
       function( row, data, dataIndex){
           if( data[4] == "ACTIVA"){
               $(row).css('background-color', 'white');
 
-             
+
           }
           else {
               $(row).css('background-color', '#d8d8d8');
           }
-         
+
 
       }
     }
@@ -116,8 +144,8 @@ $('#btnFiltroxfechaCLiente').click(function () {
 function filtrarxfechaCliente(){
 
   objTable = $("#tblVtsTerceros").DataTable();
-  objTable.rows().remove().draw( false ); 
-   
+  objTable.rows().remove().draw( false );
+
   var desde = $("#F1C").val();
   var hasta = $("#F2C").val();
 
@@ -131,7 +159,7 @@ function filtrarxfechaCliente(){
     type: "POST",
     data: form_data,
     success: function(res){
-      
+
       var e = JSON.parse(res);
 
        if(e.results[0].idVnts == null){
@@ -153,9 +181,9 @@ function filtrarxfechaCliente(){
          ( [
               e.results[f].fechaVnts,
               e.results[f].idVnts,
-              e.results[f].clienteVnts,   
-              e.results[f].telClteVnts,   
-              estado,         
+              e.results[f].clienteVnts,
+              e.results[f].telClteVnts,
+              estado,
               '<center><a href="#ModalVerDetVnts" id="btnVerDetVnts" class="noHover modal-trigger"><i class="material-icons">&#xE417;</i></a>&nbsp'
           ] ).draw( false )
 
@@ -164,11 +192,11 @@ function filtrarxfechaCliente(){
          ( [
               e.results[f].fechaVnts,
               e.results[f].idVnts,
-              e.results[f].clienteVnts,   
-              e.results[f].telClteVnts,   
-              estado,         
+              e.results[f].clienteVnts,
+              e.results[f].telClteVnts,
+              estado,
               '<center><a href="#ModalVerDetVnts" id="btnVerDetVnts" class="noHover modal-trigger"><i class="material-icons">&#xE417;</i></a>&nbsp'+
-              '&nbsp<a href="#!" id="btnAnularVnts" class="Icono noHover"><i class="material-icons">highlight_off</i></a></center>' 
+              '&nbsp<a href="#!" id="btnAnularVnts" class="Icono noHover"><i class="material-icons">highlight_off</i></a></center>'
           ] ).draw( false )
          }
 
@@ -194,7 +222,7 @@ function showNameUser(){
           var e = JSON.parse(idRegistro);
 
          // llamado a la funcion que agregar detalles de registros agregando en cada uno el id de ventas al que pertenecen
-        
+
         resultado = e[0].Nombre_visitador;
         $("#nomUser").html(resultado);
 
@@ -207,56 +235,6 @@ function showNameUser(){
 
 
 
-$("#productos").autocomplete({
-  appendTo: "#result",
-  source : function(request, cb){
-    $.ajax({
-      url:"listandoProductos",
-      type: "post",
-      dataType: "json",
-      cache: false,
-      async: false,
-      data: {data: request.term},
-      success: function(res){  
-
-        var result =
-                [
-                    {
-                        cod:"",
-                        desc:"",
-                        value:"",
-                        //nom:"No se encntraron datos para"+request.term,
-
-                    }
-                ];
-                if(res.length){
-                    result = $.map(res, function(obj){
-                        return{
-                            desc: obj.desc,
-                            value: obj.value,
-                            cod: obj.cod,
-                            data: obj
-                        };
-                    });
-                }
-                cb(result);
-
-      }
-
-    });
-    
-  }
-
-  select: function(event, selectedData){
-        if (selectedData && selectedData.item && selectedData.item.data){
-            var data = selectedData.item.data;
-            //recoge valores de la consulta y los agrega a los campos deseados
-            var cod = data.cod;
-            $("#labelDirCrearPedido").html(data.dir);
-            datosCreditoClte(cod);
-        }
-    }
-});
 
 $("#txtCLienteNewFact").autocomplete({
     appendTo: "#resultClte",
@@ -265,7 +243,7 @@ $("#txtCLienteNewFact").autocomplete({
           url:"listandoClientes/"+request.term,// mandarlo por post
           method: "GET",
           dataType: "json",
-            success: function(res){  
+            success: function(res){
                 var result =
                 [
                     {
@@ -293,7 +271,7 @@ $("#txtCLienteNewFact").autocomplete({
             }
 
         });
-        
+
     },
     select: function(event, selectedData){
         if (selectedData && selectedData.item && selectedData.item.data){
@@ -327,7 +305,7 @@ function datosCreditoClte(codClte){//obtener datos de la tabla de SAC_DISP_CREDI
 //Llenar Data table registro por registro al persiona boton agregar
 $("#addProdDet").on('click', function(){
 
-  
+
   var partesIdProd = $("#productos").val().split(' - ');
   var idProd = partesIdProd[0];
   var descProd =partesIdProd[1];
@@ -349,7 +327,7 @@ $("#addProdDet").on('click', function(){
       ] ).draw( false );
     }
     $("#productos").val("");
-   
+
 })
 
 //Accion que desencadena las funciones necesarioas para agregar Maestro y detalle de ventas en la base de datos
@@ -361,7 +339,7 @@ $("#addNewVnt").on('click', function(){
   var contVnt = $("#txtContactNewFact").val();
   var idRegVnts;
 
-  
+
 
    Objtable1 = $("#tblDetVntTerceros").DataTable();
 
@@ -373,7 +351,7 @@ $("#addNewVnt").on('click', function(){
       Materialize.toast("Agregue productos a la tabla antes de guardar");
     }else{
 
-   
+
 
     var regDatGeneralVnt = {
       fechaVnt: fechaVnt,
@@ -396,7 +374,7 @@ $("#addNewVnt").on('click', function(){
             //Llamado a funcion que busca ultimo id de ventas agregado por usuario, dentro de esta esta la funcion que llama a la funcion que agrega los detalles a la base de datos y agrega el id de ventas al que pertenece cada registro
           BuscarUltimoRegistroVnts();
 
-          Objtable1.rows().remove().draw( false ); 
+          Objtable1.rows().remove().draw( false );
             $("#tblDetVntTerceros").DataTable();
 
 
@@ -436,13 +414,13 @@ function AddDetallesVnts(idRegVnts){
 
   console.log(idRegVnts);
    Objtable = $("#tblDetVntTerceros").DataTable();
-  
+
 
     var regDatDetlVnt ={};
-    var i = 0;     
+    var i = 0;
     Objtable.rows().data().each( function (index) {
        regDatDetlVnt[i]={};
-       
+
         regDatDetlVnt[i]['idVnts'] = idRegVnts;
         regDatDetlVnt[i]['idArt'] = index[0];
         regDatDetlVnt[i]['descDetArtVnts'] = index[1];
@@ -472,7 +450,7 @@ function AddDetallesVnts(idRegVnts){
                 }).then(function(){
 
                   location.reload();
-                    
+
               });
 
         }else{
@@ -501,11 +479,10 @@ function LlenarDTVentasTerceros(){
     async:false,
     success:
     function(json){
-      
-     
+
+
 
        var e = JSON.parse(json);
-       console.log(e.results.length);
 
 
 
@@ -526,9 +503,9 @@ function LlenarDTVentasTerceros(){
          ( [
               e.results[f].fechaVnts,
               e.results[f].idVnts,
-              e.results[f].clienteVnts,   
-              e.results[f].telClteVnts,   
-              estado,         
+              e.results[f].clienteVnts,
+              e.results[f].telClteVnts,
+              estado,
               '<center><a href="#ModalVerDetVnts" id="btnVerDetVnts" class="noHover modal-trigger"><i class="material-icons">&#xE417;</i></a>&nbsp'
           ] ).draw( false )
 
@@ -537,11 +514,11 @@ function LlenarDTVentasTerceros(){
          ( [
               e.results[f].fechaVnts,
               e.results[f].idVnts,
-              e.results[f].clienteVnts,   
-              e.results[f].telClteVnts,   
-              estado,         
+              e.results[f].clienteVnts,
+              e.results[f].telClteVnts,
+              estado,
               '<center><a href="#ModalVerDetVnts" id="btnVerDetVnts" class="noHover modal-trigger"><i class="material-icons">&#xE417;</i></a>&nbsp'+
-              '&nbsp<a href="#!" id="btnAnularVnts" class="Icono noHover"><i class="material-icons">highlight_off</i></a></center>' 
+              '&nbsp<a href="#!" id="btnAnularVnts" class="Icono noHover"><i class="material-icons">highlight_off</i></a></center>'
           ] ).draw( false )
          }
         }
@@ -562,7 +539,7 @@ $("#tblVtsTerceros").delegate("#btnAnularVnts","click", function(){
    var estado;
 
   tdItems= $('#tblVtsTerceros').DataTable().rows($(this).parents("tr")).data();
-   codVenta =tdItems[0][1]; 
+   codVenta =tdItems[0][1];
    estadoAntes= tdItems[0][4];
 
 
@@ -575,11 +552,11 @@ $("#tblVtsTerceros").delegate("#btnAnularVnts","click", function(){
           cancelButtonColor: '#d33',
           cancelButtonText: 'Cancelar',
           confirmButtonText: 'Sí, anular'
-        }).then((result) => 
+        }).then((result) =>
         {
           if (result.value) {
 
-           
+
              if(estadoAntes == "ACTIVA"){
                 estado= "ANULADA";
              }else{
@@ -593,14 +570,14 @@ $("#tblVtsTerceros").delegate("#btnAnularVnts","click", function(){
               async:true
              });
               location.reload();
-                   
+
           }else {
-            
+
           }
         });
 
 
-  
+
 
   })
 
@@ -616,18 +593,18 @@ $("#tblVtsTerceros").delegate("#btnVerDetVnts","click", function(){
    var codVenta;
    var nomCliente;
 
-  $('#tblVerDetVntTerceros').DataTable().rows().remove().draw(false); 
+  $('#tblVerDetVntTerceros').DataTable().rows().remove().draw(false);
 
    tdItems= $('#tblVtsTerceros').DataTable().rows($(this).parents("tr")).data();
-   fechaVenta =tdItems[0][0]; 
-   codVenta =tdItems[0][1]; 
-    nomCliente=tdItems[0][2]; 
+   fechaVenta =tdItems[0][0];
+   codVenta =tdItems[0][1];
+    nomCliente=tdItems[0][2];
 
 
   $('#txtVerFechaVnt').html(fechaVenta);
-    $('#txtVerCodVnt').html(codVenta);  
-    $('#txtVerNomClteVnt').html(nomCliente);  
-  
+    $('#txtVerCodVnt').html(codVenta);
+    $('#txtVerNomClteVnt').html(nomCliente);
+
   LlenarTablaVerDetVnts(codVenta);
 
 });
@@ -642,7 +619,7 @@ function LlenarTablaVerDetVnts(codVenta){
     url:"getSelectedSellingDetailData/"+codVenta,
     cache: false,
     async:true,
-    
+
     success:
     function(json){
 
@@ -661,7 +638,7 @@ function LlenarTablaVerDetVnts(codVenta){
 
 
     }
-    
+
   });
 
 }
@@ -687,6 +664,6 @@ $("#txtBuscarTransaccionClientes").on("keyup", function () {
 
 
 
- 
+
 
 </script>

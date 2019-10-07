@@ -7,16 +7,63 @@ class VentasTerceros_model extends CI_Model {
 
 
 
-public function NomUsuarioActual($iduser){
- $this->db->select('Nombre_visitador');
-        $this->db->from("usuarios");
-        $this->db->where("Usuario",$iduser);
-        $query = $this->db->get();
-        $resultado = $query->result_array();
-        echo json_encode($resultado);
-}
+    public function NomUsuarioActual($iduser){
+     $this->db->select('Nombre_visitador');
+            $this->db->from("usuarios");
+            $this->db->where("Usuario",$iduser);
+            $query = $this->db->get();
+            $resultado = $query->result_array();
+            echo json_encode($resultado);
+    }
+    public function getAllArticulos()
+    {
+        $query = $this->sqlsrv->fetchArray("SELECT * FROM GMV_mstr_articulos",SQLSRV_FETCH_ASSOC);
+        if($query){
+            return $query;
+        }
+        $this->sqlsrv->close();
+    }
+    public function getAllClientes($iD)
+    {
+
+        $query = $this->sqlsrv->fetchArray("SELECT * FROM GMV_Clientes WHERE ACTIVO ='S' AND VENDEDOR = '".$iD."' ORDER BY NOMBRE", SQLSRV_FETCH_ASSOC);
+        if($query){
+            return $query;
+        }
+        $this->sqlsrv->close();
+    }
+
+    public function getInfoCliente($ID){
+        $query = $this->sqlsrv->fetchArray("SELECT * FROM GMV_Clientes WHERE CLIENTE = '$ID' ",SQLSRV_FETCH_ASSOC);
+        $i=0;
+        $json = array();
+        foreach($query as $fila){
+            $json["data"][$i]["DIR"] = $fila["DIRECCION"];
+            $json["data"][$i]["CRE"] = number_format($fila["CREDITO"],4);
+            $json["data"][$i]["SAL"] = number_format($fila["SALDO"],4);
+            $json["data"][$i]["DIS"] = number_format($fila["DISPONIBLE"],4);
+            $i++;
+        }
+        echo json_encode($json);
+        $this->sqlsrv->close();
+    }
+    public function getInfoArticul($ID){
+        $query = $this->sqlsrv->fetchArray("SELECT * FROM GMV_mstr_articulos WHERE ARTICULO = '$ID' ",SQLSRV_FETCH_ASSOC);
+        $i=0;
+        $json = array();
+        foreach($query as $fila){
 
 
+            $json["data"][$i]["EXI"] = number_format($fila["EXISTENCIA"],4);
+            $json["data"][$i]["PRE"] = number_format($fila["PRECIO_FARMACIA"],4);
+            $json["data"][$i]["REG"] = $fila["REGLAS"];
+            $i++;
+        }
+        echo json_encode($json);
+        $this->sqlsrv->close();
+    }
+
+/*INICIO DE VALORAR SI SE TIENE QUE QUITAR*/
 
     public function listandoProductos($data) {
         
@@ -44,8 +91,9 @@ public function NomUsuarioActual($iduser){
 
     public function listandoClientes($data) {
 
+
         $temp=array(); $i=0;
-        $query = $this->sqlsrv->fetchArray("SELECT * FROM GMV_Clientes WHERE ACTIVO ='S' AND NOMBRE LIKE '".$data."%' ORDER BY NOMBRE", SQLSRV_FETCH_ASSOC);
+        $query = $this->sqlsrv->fetchArray("SELECT * FROM GMV_Clientes WHERE ACTIVO ='S' AND VENDEDOR = '".$data."' ORDER BY NOMBRE", SQLSRV_FETCH_ASSOC);
         
 
         if (count($query)>0) {
@@ -67,6 +115,8 @@ public function NomUsuarioActual($iduser){
         $this->sqlsrv->close();
     
     }
+
+    /*FIN DE VALORAR SI SE TIENE QUE QUITAR*/
 
 
     public function datosCreditoClte($data){

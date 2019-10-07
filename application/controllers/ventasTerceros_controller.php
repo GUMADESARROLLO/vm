@@ -13,9 +13,21 @@ class VentasTerceros_controller extends CI_Controller {
 
 	public function index() {
         $this->load->view('header/header');
-        $this->load->view('Pages/Ventas_terceros/VentasTerceros');
+
+        $data= array(
+            'arArticulos' => $this->ventasTerceros_model->getAllArticulos(),
+            'arClientes' => $this->ventasTerceros_model->getAllClientes($this->session->userdata('usuario'))
+        );
+
+        $this->load->view('Pages/Ventas_terceros/VentasTerceros',$data);
         $this->load->view('footer/footer');
         $this->load->view('jsView/js_ventasTerceros');
+    }
+    public function getInfoCliente($ID){
+        $this->ventasTerceros_model->getInfoCliente($ID);
+    }
+    public function getInfoArticul($ID){
+        $this->ventasTerceros_model->getInfoArticul($ID);
     }
 
 
@@ -32,19 +44,19 @@ class VentasTerceros_controller extends CI_Controller {
     	$this->ventasTerceros_model->filtrarxfechaCliente($data);
     }
 
+
+    /*INICIO VALORAR SI HAY QUE ELIMINAR*/
 	public function listandoProductos(){
 		$data = array('buscar' => $this->input->post('data'));
 		//print_r($_REQUEST);
 	
 		$this->ventasTerceros_model->listandoProductos($data);
     }
-
-
-    public function listandoClientes($keyword){
-		
-	
-		$this->ventasTerceros_model->listandoClientes($keyword);
+    public function listandoClientes(){
+		$this->ventasTerceros_model->listandoClientes($this->session->userdata('usuario'));
     }
+    /*FIN VALORAR SI HAY QUE ELIMINAR*/
+
 
     public function datosCreditoClte(){
     	$data = array('codClte' => $this->input->post('codClte'));
