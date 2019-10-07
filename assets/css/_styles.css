@@ -1,0 +1,459 @@
+@font-face {
+    font-family: 'robotoblack';
+    src: url('/vm/assets/fonts/Robot/roboto-black-webfont.eot');
+    src: url('/vm/assets/fonts/Robot/roboto-black-webfont.eot?#iefix') format('embedded-opentype'),
+    url('/vm/assets/fonts/Robot/roboto-black-webfont.woff2') format('woff2'),
+    url('/vm/assets/fonts/Robot/roboto-black-webfont.woff') format('woff'),
+    url('/vm/assets/fonts/Robot/roboto-black-webfont.ttf') format('truetype'),
+    url('/vm/assets/fonts/Robot/roboto-black-webfont.svg#robotoblack') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+@font-face {
+    font-family: 'robotobold';
+    src: url('/vm/assets/fonts/Robot/roboto-bold-webfont.eot');
+    src: url('/vm/assets/fonts/Robot/roboto-bold-webfont.eot?#iefix') format('embedded-opentype'),
+    url('/vm/assets/fonts/Robot/roboto-bold-webfont.woff2') format('woff2'),
+    url('/vm/assets/fonts/Robot/roboto-bold-webfont.woff') format('woff'),
+    url('/vm/assets/fonts/Robot/roboto-bold-webfont.ttf') format('truetype'),
+    url('/vm/assets/fonts/Robot/roboto-bold-webfont.svg#robotobold') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+@font-face {
+    font-family: 'robotomedium';
+    src: url('/vm/assets/fonts/Robot/roboto-medium-webfont.eot');
+    src: url('/vm/assets/fonts/Robot/roboto-medium-webfont.eot?#iefix') format('embedded-opentype'),
+    url('/vm/assets/fonts/Robot/roboto-medium-webfont.woff2') format('woff2'),
+    url('/vm/assets/fonts/Robot/roboto-medium-webfont.woff') format('woff'),
+    url('/vm/assets/fonts/Robot/roboto-medium-webfont.ttf') format('truetype'),
+    url('/vm/assets/fonts/Robot/roboto-medium-webfont.svg#robotomedium') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+@font-face {
+    font-family: 'robotocondensed';
+    src:url('/vm/assets/fonts/roboto/RobotoCondensed-Bold.ttf') format('truetype'),
+    url('/vm/assets/fonts/roboto/RobotoCondensed-BoldItalic.ttf') format('truetype'),
+    url('/vm/assets/fonts/roboto/RobotoCondensed-Italic.ttf') format('truetype'),
+    url('/vm/assets/fonts/roboto/RobotoCondensed-Light.ttf') format('truetype'),
+    url('/vm/assets/fonts/roboto/RobotoCondensed-LightItalic.ttf') format('truetype'),
+    url('/vm/assets/fonts/roboto/RobotoCondensed-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+
+}
+@font-face {
+    font-family: 'robotoregular';
+    src: url('/vm/assets/fonts/Robot/roboto-regular-webfont.eot');
+    src: url('/vm/assets/fonts/Robot/roboto-regular-webfont.eot?#iefix') format('embedded-opentype'),
+    url('/vm/assets/fonts/Robot/roboto-regular-webfont.woff2') format('woff2'),
+    url('/vm/assets/fonts/Robot/roboto-regular-webfont.woff') format('woff'),
+    url('/vm/assets/fonts/Robot/roboto-regular-webfont.ttf') format('truetype'),
+    url('/vm/assets/fonts/Robot/roboto-regular-webfont.svg#robotoregular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+}
+.menu-center {
+	width: 70%;
+	margin: 0 auto;
+}
+
+.modal { width: 85% !important ; height: 85% !important ; } 
+
+#_footer {
+   position:fixed;
+   left:0px;
+   bottom:0px;
+   height:25px;
+   width:100%;
+   margin-bottom: 0px;
+   font-size: 11px;
+}
+
+.logo-img {
+  width: 150px;
+  margin-top: 5px;
+  padding: 10px 10px;
+  cursor: pointer;
+}
+
+.totales {
+  font-family: 'robotobold';
+  text-transform: uppercase;
+  color: #000000;
+  font-size: 23px;
+}
+
+.totales-content {
+  padding: 10px 10px;
+  margin-top: 20px;
+  margin-bottom: 5px;
+  border-radius: 4px;
+}
+#txtFechaNewFact{
+  color: #000000;
+  font-size: 18px;
+}
+
+.content-data {
+  /*height: 300px;*/
+}
+
+/*LOADER*/
+.loader-1, .load-1 {
+  position: absolute;
+  width: 100px;
+  color: white;
+  line-height: 100px;
+  text-align: center;
+}
+
+.loader-1 {
+  z-index: 1000;
+  background-color: white;
+  border-radius: 5px;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  margin-top: -50px;
+  margin-left: -50px;
+  width: 100px;
+  height: 100px;
+}
+
+.load-1 {
+  background: black;
+  position: fixed;
+  z-index: 999;  
+  top: -25%;
+  left: 0;
+  bottom: 0;
+  right: 0;
+  width: 100%;
+  background: #000;  
+  will-change: opacity;
+  opacity: 0.5;
+}
+/*FIN LOADER*/
+
+.title {
+  font-family: 'robotobold';
+  font-weight: bold;
+  font-size: 20px;
+}
+/*ESTILO DATATABLE*/
+.dt-center {
+  text-align: center;
+}
+
+.dt-right {
+  text-align: right;
+}
+
+.dt-left {
+  padding-left: 30px;
+  text-align: left;
+}
+/*FIN ESTILO DATATABLE*/
+
+/*INPUT*/
+#productos, #buscar, #txtBuscar, #txtBuscarClteProd, #txtCantidad, #txtCLienteNewFact, #txtContactNewFact, #buscar3M, #txtBuscarMed, #txtBuscarTransaccion, #txtBuscarFarm, #txtBuscarRpt {
+  height: 42px;
+  width: 100%;
+  padding: 0px 10px;
+  border: 1px solid #e0e0e0;
+  margin: 0;
+  text-overflow: ellipsis;
+    -webkit-box-sizing: border-box;
+    -moz-box-sizing: border-box;
+  box-sizing: border-box;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    -khtml-border-radius: 4px;
+  border-radius: 4px;
+    -webkit-box-shadow: none;
+    -moz-box-shadow: none;
+  box-shadow: none;
+  color: #000;
+  font-size: 1em;
+  font-weight: 400;
+  direction: ltr;
+  border-top-left-radius: 0rem;
+  border-bottom-left-radius: 0rem;
+}
+
+#buscar:focus {
+  box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+  border: 1px solid rgba(81, 203, 238, 1);
+}
+
+#buscar3M:focus {
+  box-shadow: 0 0 5px rgba(81, 203, 238, 1);
+  border: 1px solid rgba(81, 203, 238, 1);
+}
+
+/*ESTILO RUTA*/
+.ruta {
+  font-size: 45px;
+  font-family: 'robotobold';
+  padding: 10px 10px 10px 10px;
+  background-color: #bdbdbd;
+}
+
+#temporal {
+  width: 80%;
+  min-height: 75%;
+}
+
+#detalleReporte {
+  width: 95%;
+  min-height: 75%;
+}
+
+#tblFarmacias_filter, #tblMedicos_filter, #tblVtsTotales_filter, #tblReporte_filter {
+  display: none;
+}
+
+#tblVtsTotales_length, #tblMedicos_length, #tblFarmacias_length, #tblReporte_length {
+  display: none;
+}
+
+#temporal1 {
+  margin: 0 auto;
+  max-width: 20%;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 1000;
+    display: none;
+    float: left;
+    min-width: 10rem;
+    padding: 0.5rem 0;
+    margin: 0.125rem 0 0;
+    font-size: 1rem;
+    color: #212529;
+    text-align: left;
+    list-style: none;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 0.25rem;
+}
+
+.fixed-action-btn2 {
+  position: absolute;
+  left: 5%;
+  top: 8.0%;
+  transform: translate(0%, -50%);
+    -webkit-transform: translate(0%, -50%);
+  z-index: 500;
+}
+
+@media only screen and (max-width: 1600px) {
+.fixed-action-btn2 {
+    position: absolute;
+    left: 5%;
+    top: 8.0%;
+    transform: translate(0%, -50%);
+      -webkit-transform: translate(0%, -50%);
+    z-index: 500;
+  }
+}
+
+#select1 {
+  position: relative;
+  align-items: center;
+  cursor: pointer;
+  border: solid 1px #E2E2E2;
+  background-color: transparent;
+  float: right;
+  width: 100%;
+  height: 40px;
+  font-size: 1rem;
+  display: block;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+}
+
+.title-2 {
+  font-family: "robotomedium";
+  font-size: 18px;
+  color: #757575;
+}
+
+.title-3 {
+  font-family: 'robotoregular';
+  font-size: 18px;
+}
+
+#tblTemporal thead {
+  background: #e0e0e0;
+  border: solid 1px #DDDDDD;
+  color: white
+}
+
+#tblTemporal th, td {
+  border-radius: 0px;
+}
+
+.detalle-rpt {
+  cursor: pointer;
+}
+
+.input-group {
+  position: relative;
+  display: -webkit-box;
+  display: -webkit-flex;
+  display: -ms-flexbox;
+  display: flex;
+  width: 100%;
+}
+.input-group-addon {
+  padding: 0.5rem 0.75rem;
+  margin-bottom: 0;
+  font-size: 1rem;
+  font-weight: normal;
+  line-height: 1.25;
+  color: #464a4c;
+  text-align: center;
+  background-color: #eceeef;
+  border: 1px solid #e0e0e0;
+  border-radius: 0.25rem;
+  border-top-right-radius: 0rem;
+  border-bottom-right-radius: 0rem;
+  border-right: none;
+}
+
+.commmit-1 {
+  float: left;
+  width: 14.5%;
+  clear:both;
+  margin-bottom: 0px;
+  position: absolute;
+}
+
+#tblTemporal th, td {
+   border: #E2E2E2 1px solid;
+   vertical-align: middle;
+   text-align: center;
+}
+
+#tblTemporal th {
+   text-align: center;
+}
+
+#tblTemporal td {
+   text-align: center;
+}
+
+.d-t {
+  width: 4.5rem;
+  font-size: 12px;
+}
+
+
+#tblTemporal {
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+#content-table {
+  margin: 0 auto;
+  margin-top: 30px;
+  margin-bottom: 50px;
+  width: 96%;
+}
+
+.estilo1 {
+  background: #eeeeee;
+  padding: 1px;
+}
+
+.estilo2 {
+  background: #f5f5f5;
+  padding: 1px;
+}
+
+#tblTemporal1 {
+    position: fixed;
+    border-collapse: collapse;
+    top: 0px;
+    width: 96%;
+    display:none;
+}
+
+/*DATEPICKLER*/
+  button {
+      display: inline-block;
+      outline: 0;
+      border: 0;
+      cursor: pointer;
+      background: #5185a8;
+      color: #fff;
+      text-decoration: none;
+      font-family: arial, verdana, sans-serif;
+      font-size: 14px;
+  }
+  .demo-non-form {
+      color: initial;
+      width: 100%;
+      padding: 10px;
+      margin: 6px 0 12px 0;
+      border: 1px solid #ccc;
+      border-radius: 0;
+      font-family: arial, verdana, sans-serif;
+      font-size: 14px;
+      box-sizing: border-box;
+      -webkit-appearance: none;
+  }
+
+  .demo-container {
+      padding: 0 1em;
+  }
+
+  .external-container {
+      display: flex;
+  }
+
+  .external-container button.external-button {
+      font-weight: 400;
+      padding: 10px;
+      margin: 6px 0 12px 16px;
+  }
+
+.date-picker-wrapper .month-wrapper table .week-name > th {
+  font-size: 10px
+}
+
+.date-picker-wrapper {
+  z-index: 50000;
+  position: absolute;
+  left: 50% !important;
+  top: 50% !important;
+  transform: translate(-50%, -50%);
+  -webkit-transform: translate(-50%, -50%);
+}
+
+.month > select {
+  width: auto !important;
+}
+
+@media only screen and (max-width: 1024px) {
+  .commmit-1 {
+    width: 90%;
+    margin: 0 auto;
+    float: none;
+    position: relative;
+  }
+}
+
+
