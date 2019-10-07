@@ -180,9 +180,9 @@ class VentasTerceros_model extends CI_Model {
 
 
 
-    public function AgregarNuevaVenta($data){
+    public function AgregarNuevoPedido($data){
 
-          $query = $this->db->insert('ventas_terceros',array('clienteVnts'=> $data['clienteVnts'], 'fechaVnts' => $data['fechaVnt'], 'idUserRegVnts' => $data['idUser'],'telClteVnts' => $data['contVnt']) );
+          $query = $this->db->insert('pedido',array('IDPEDIDO'=>$data['idPedido'],'VENDEDOR'=> $data['idVendedor'],'RESPONSABLE'=> $data['idResponsable'],'CLIENTE'=> $data['idCliente'],'NOMBRE'=> $data['NombreClte'],'MONTO'=> $data['monto'],'ESTADO'=> 0,'FECHA_CREADA'=> NOW(),'COMENTARIO'=> $data['comentario'].'['. $data['cantArt'].' Articulos','COMENTARIO_CONFIRM'=> $data['comentConfirm']));
           
 
         if ($query) {
@@ -204,10 +204,10 @@ class VentasTerceros_model extends CI_Model {
      }
 
 
-    public function AgregarDetalledeVenta($data){
+    public function AgregarDetalledePedido($data){
 
         foreach ($data as $key=>$value){
-        $query = $this->db->insert('ventas_detalles_terceros',array('idVnts'=> $value['idVnts'], 'idArt' => $value['idArt'], 'descDetArtVnts' => $value['descDetArtVnts'],'cantDetVnts' => $value['cantDetVnts']) );
+        $query = $this->db->insert('pedido_detalle',array('IDPEDIDO'=> $value['idPedido'], 'ARTICULO' => $value['idArt'], 'DESCRIPCION' => $value['descArt'],'CANTIDAD' => $value['cantArt'], 'TOTAL'=> $value['totalPedido'], 'BONIFICADO' => $value['artBonif'], 'IVA' => $value['ivaPedido'],'DESCUENTO' => $value['descPedido']) );
         }
 
          if ($query) {

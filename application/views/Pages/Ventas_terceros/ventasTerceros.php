@@ -179,6 +179,7 @@
 		    	</div>
 		    	<div class="col s12 m2">
 		    		<div class="Seleccione el Producto">Bonificación</div>
+
 		  				<select  id="slcCantidad">
 		  					<option value="0">Elegir</option>
 		  				</select>
@@ -204,6 +205,7 @@
 			            	<th>CODIGO</th>
 			                <th>PRODUCTO</th>
 			                <th>CANTIDAD</th>
+			                <th>PRECIO</th>
 			                <th>BONIF.</th>
 			                <th>TOTAL</th>
 			                <th>QUITAR</th>
@@ -212,7 +214,10 @@
 			        <tfoot>
 			        </tfoot>
 	            </table>
-	            <div style="text-align: right;"><span>TOTAL: </span> <span >1,232,434.54 </span></div>
+	            <div style="text-align: right;"><span>SUB-TOTAL: C$</span> <span id="spanTotalPedido" >0.00</span></div>
+	            <div style="text-align: right;"><span>IVA: C$</span> <span id="spanIvaPedido" >0.00</span></div>
+	            <div style="text-align: right;"><span>TOTAL: C$</span> <span id="spanGranTotalPedido" >0.00</span></div>
+
 
 			</div>
 			<div class="right col s12 m3">

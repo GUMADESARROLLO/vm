@@ -70,22 +70,27 @@ class VentasTerceros_controller extends CI_Controller {
 	  }
 
 
-	 public function AgregarNuevaVenta(){
+	 public function AgregarNuevoPedido(){
 	 	$data= array(
-	            'fechaVnt' => $this->input->post('fechaVnt'),
-	            'clienteVnts' => $this->input->post('clienteVnts'),
-	            'contVnt' => $this->input->post('contVnt'),
-	            'idUser' => $this->session->userdata('usuario')
+	            'idPedido' => $this->input->post('idPedido'),
+	            'idVendedor' => $this->input->post('idVendedor'),
+	            'idCliente' => $this->input->post('idCliente'),
+	            'NombreClte' => $this->session->userdata('NombreClte'),
+	            'monto' => $this->input->post('monto'),
+	            'comentario' => $this->input->post('comentario'),
+	            'cantArt' => $this->input->post('cantArt'),
+	            'comentConfirm' => $this->session->userdata('comentConfirm')
 	            
 	        );
-	 	$this->ventasTerceros_model->AgregarNuevaVenta($data);
+
+	 	$this->ventasTerceros_model->AgregarNuevoPedido($data);
 	 }
 
 
 
-	 public function AgregarDetalledeVenta(){
+	 public function AgregarDetalledePedido(){
 	 	$data = $_POST['data'];
-	 	$this->ventasTerceros_model->AgregarDetalledeVenta($data);
+	 	$this->ventasTerceros_model->AgregarDetalledePedido($data);
 	 }
 
 	public function getNewSellingData(){
