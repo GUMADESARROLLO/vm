@@ -175,18 +175,18 @@
 		    	<div class="col s12 m2">
 		    		<div class="Seleccione el Producto">Precio</div>
 		    		<div class="input-group">
-		  				<input type="text" class="form-control" id="txtCantidad" placeholder="Cantidad"/>
+		  				<input type="text" class="form-control" id="txtPrecio" placeholder="Precio"/>
 		  			</div>
 		    	</div>
 		    	<div class="col s12 m2">
 		    		<div class="Seleccione el Producto">Bonificación</div>
-		  				<select  id="txtCantidad">
+		  				<select  id="selectBonif">
 		  					<option value="0">Elegir</option>
-		  					<option value="1">100+10</option>
-		  					<option value="2">6+1</option>
-		  					<option value="3">15+3</option>
-		  					<option value="4">30+8</option>
-		  					<option value="5">50+13</option>
+		  					<option value="100+10">100+10</option>
+		  					<option value="6+1">6+1</option>
+		  					<option value="6+1">15+3</option>
+		  					<option value="30+8">30+8</option>
+		  					<option value="50+13">50+13</option>
 		  				</select>
 		    	</div>
 		    	<div class="col s12 m2">
@@ -210,6 +210,7 @@
 			            	<th>CODIGO</th>
 			                <th>PRODUCTO</th>
 			                <th>CANTIDAD</th>
+			                <th>PRECIO</th>
 			                <th>BONIF.</th>
 			                <th>TOTAL</th>
 			                <th>QUITAR</th>
@@ -218,7 +219,10 @@
 			        <tfoot>
 			        </tfoot>
 	            </table>
-	            <div style="text-align: right;"><span>TOTAL: </span> <span >1,232,434.54 </span></div>
+	            <div style="text-align: right;"><span>SUB-TOTAL: C$</span> <span id="spanTotalPedido" >0.00</span></div>
+	            <div style="text-align: right;"><span>IVA: C$</span> <span id="spanIvaPedido" >0.00</span></div>
+	            <div style="text-align: right;"><span>TOTAL: C$</span> <span id="spanGranTotalPedido" >0.00</span></div>
+
 
 			</div>
 			<div class="right col s12 m3">

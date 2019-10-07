@@ -247,15 +247,15 @@ $("#productos").autocomplete({
     
   }
 
-  select: function(event, selectedData){
+  /*select: function(event, selectedData){
         if (selectedData && selectedData.item && selectedData.item.data){
-            var data = selectedData.item.data;
+            //var data = selectedData.item.data;
             //recoge valores de la consulta y los agrega a los campos deseados
-            var cod = data.cod;
-            $("#labelDirCrearPedido").html(data.dir);
-            datosCreditoClte(cod);
+            //var cod = data.cod;
+            //$("#labelDirCrearPedido").html(data.dir);
+            //datosCreditoClte(cod);
         }
-    }
+    }*/
 });
 
 $("#txtCLienteNewFact").autocomplete({
@@ -332,7 +332,19 @@ $("#addProdDet").on('click', function(){
   var idProd = partesIdProd[0];
   var descProd =partesIdProd[1];
   var cantProd = $("#txtCantidad").val();
-  console.log(partesIdProd+","+idProd+","+descProd+","+cantProd);
+  var precioProd = $("#txtPrecio").val();
+  var bonifProd = $("#selectBonif").val();
+  
+
+
+ 
+
+
+
+
+
+  totProd= parseFloat(cantProd) * parseFloat(precioProd);
+  
 
   Objtable = $("#tblDetVntTerceros").DataTable();
 
@@ -345,9 +357,37 @@ $("#addProdDet").on('click', function(){
           idProd,
           descProd,
           cantProd,
+          "C$"+precioProd,
+          bonifProd,
+          totProd,
           '<a href="#!" id="RowDelete" class="BtnClose"><i class="material-icons">highlight_off</i></a>'
       ] ).draw( false );
     }
+
+  var Total=0.00;
+  var lastTotal = parseFloat($("#spanTotalPedido").html());
+  if (lastTotal!=0) {
+    Total += lastTotal + (parseFloat(cantProd) * parseFloat(precioProd));
+  }else{
+    Total = parseFloat(cantProd) * parseFloat(precioProd);
+  }
+  
+
+   /* var data = Objtable.rows().data();
+    longitudTabla=data.length;
+    var Total = Objtable.row(longitudTabla).column(5).data();// lee el dato de la ultima fila agregada en la columna 4 
+    var IVA = (parseFloat(Total[0])*0.15);
+    granTotal += IVA + parseFloat(Total[0]);*/
+    var IVA = parseFloat(Total)*0.15;
+    var granTotal = 0.00;
+    granTotal = IVA + parseFloat(Total);
+
+
+    $("#spanTotalPedido").html(Total.toFixed(3));
+    $("#spanIvaPedido").html(IVA.toFixed(3));
+    $("#spanGranTotalPedido").html(granTotal.toFixed(3));
+
+
     $("#productos").val("");
    
 })
@@ -383,7 +423,7 @@ $("#addNewVnt").on('click', function(){
 
 
       $.ajax({
-      url: "AgregarNuevaVenta",
+      url: "AgregarNuevoPedido",
        type: "post",
         dataType: "json",
         cache: false,
@@ -442,18 +482,23 @@ function AddDetallesVnts(idRegVnts){
     var i = 0;     
     Objtable.rows().data().each( function (index) {
        regDatDetlVnt[i]={};
-       
-        regDatDetlVnt[i]['idVnts'] = idRegVnts;
+
+        regDatDetlVnt[i]['idPedido'] = idRegVnts;
         regDatDetlVnt[i]['idArt'] = index[0];
-        regDatDetlVnt[i]['descDetArtVnts'] = index[1];
-        regDatDetlVnt[i]['cantDetVnts'] = index[2];
+        regDatDetlVnt[i]['descArt'] = index[1];
+        regDatDetlVnt[i]['cantArt'] = index[2];
+        regDatDetlVnt[i]['totalPedido'] = index[3];
+        regDatDetlVnt[i]['artBonif'] = index[4];
+        regDatDetlVnt[i]['ivaPedido'] = index[5];
+        regDatDetlVnt[i]['descPedido'] = index[6];   
         i++;
     });
+
 
     console.log(regDatDetlVnt);
 
     $.ajax({
-      url: "AgregarDetalledeVenta",
+      url: "AgregarDetalledePedido",
       type: "post",
       dataType: "json",
       cache: false,
@@ -669,15 +714,34 @@ function LlenarTablaVerDetVnts(codVenta){
 
 //REMUEVE UNA FILA DE UNA TABLA
 $('#tblDetVntTerceros').on('click', '#RowDelete', function(){
+  var granTotal = 0.00;
+  var TotalFila = 0.00;
   var table = $('#tblDetVntTerceros').DataTable();
-  table.row( $(this).parents('tr') ).remove().draw();
+
+   tdItem = table.rows($(this).parents('tr')).data();// lee  datos de la tabla 
+   TotalFila = tdItem[0][5];// toma el valor de la columna total
+  table.row( $(this).parents('tr') ).remove().draw();// remueve la fila
+  console.log(TotalFila);
+
+
     if ( ! table.data().any() ) {
     Materialize.toast("La tabla se encuentra vacia", 4000, 'rounded');
+  }else{
+   
+    var Total = parseFloat($("#spanTotalPedido").html()) - parseFloat(TotalFila);
+
+    var IVA = parseFloat(Total)*0.15;
+    granTotal = IVA + parseFloat(Total);
+  
+
+    $("#spanTotalPedido").html(Total.toFixed(3));
+    $("#spanIvaPedido").html(IVA.toFixed(3));
+    $("#spanGranTotalPedido").html(granTotal.toFixed(3));
   }
 
 
 
-})
+});
 
 
 $("#txtBuscarTransaccionClientes").on("keyup", function () {
