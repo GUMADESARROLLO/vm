@@ -1,5 +1,5 @@
 <main class="container">
-	<span class="totales">TRANSACCIONES REALIZADAS</span><?php if($this->session->userdata('rol')==3) echo '<span class="totales">&nbspPOR&nbsp</span> <span class="totales" id="nomUser"> </span>'?>
+	<span class="totales">PEDIDOS REALIZADOS</span><!--<?php //if($this->session->userdata('rol')==3) echo '<span class="totales">&nbspPOR&nbsp</span> <span class="totales" id="nomUser"> </span>'?>-->
 	<div class="divider"></div><br>
 
 
@@ -11,7 +11,7 @@
 				<div class="row">
 					<div class="col s12 m4">
 						<div class="input-group" style="margin-top: 17px">
-							 <input type="text" class="form-control clssIMPUT" id="txtBuscarTransaccionClientes" placeholder="Buscar transacciones">
+							 <input type="text" class="form-control clssIMPUT" id="txtBuscarTransaccionClientes" placeholder="Buscar pedidos">
 						</div>
 			    	</div>
 
@@ -38,18 +38,18 @@
 					</div><br>
 
 					<div class="right col s12 m3" >
-						<a href="#MAddVentaNueva"  class="waves-effect waves-light btn modal-trigger" style="width: 100%; margin-top: 10px">Nueva transacción</a>
+						<a href="#MAddVentaNueva"  class="waves-effect waves-light btn modal-trigger" style="width: 100%; margin-top: 10px">Nuevo pedido</a>
 					</div>
 					<div class="col s12 m12">
 			            <table id="tblVtsTerceros" class="display" cellspacing="0" width="100%">       
 			            	<thead>
                                 <tr>
-                                    <th>FECHA</th>
-					                <th>CODIGO</th>
-					                <th>CLIENTE</th>
-					            	<th>CONTACTO</th>
-					            	<th>ESTADO</th>
-					                <th>OPCINOES</th>
+                                    <th></th>
+					                <th></th>
+					                <th></th>
+					            	<th></th>
+					                <th></th>
+					                <th></th>
                                 </tr>
                             </thead>     	
 					        <tfoot>
@@ -157,27 +157,31 @@
 		  			
 		    	</div>
 		    </div>
-        <div class="row">
-            <span>Seleccione el Producto</span>
-            <select class="chosen-select browser-default" name="Articulo" id="ListArticulo">
-                <option value="" disabled selected>...</option>
-                <?php foreach($arArticulos as $Art) echo '<option value="'.$Art['ARTICULO'].'">'.$Art['ARTICULO'].' - '.$Art['DESCRIPCION'].'</option>'; ?>
-            </select>
-        </div>
+		    <div class="row">
+		    	<div class="col s12 m12">
+		            <span>Seleccione el Producto</span>
+		            <select class="chosen-select browser-default" name="Articulo" id="ListArticulo">
+		                <option value="" disabled selected>...</option>
+		                <?php foreach($arArticulos as $Art) echo '<option value="'.$Art['ARTICULO'].'">'.$Art['ARTICULO'].' - '.$Art['DESCRIPCION'].'</option>'; ?>
+		            </select>
+		        </div>
+		    </div>
+		        
 	    	<div class="row">
-		    	<div class="col s12 m4">
-                    <div class="Seleccione el Producto">Cantidad: </div>
+	    		
+		    	<div class="col s12 m2">
+                    <div class="Seleccione el Producto">Existencia: </div>
                     <div class="input-group">
-                        <input type="text" class="form-control" id="txtCantidad" placeholder="Cantidad"/>
+                        <input type="text" class="form-control" id="txtExistencia" placeholder="Existencia" disabled/>
                     </div>
 		    	</div>
 		    	<div class="col s12 m2">
 		    		<div class="Seleccione el Producto">Precio C$.:</div>
 		    		<div class="input-group">
-		  				<input type="text" class="form-control" id="txtPrecio" placeholder="Precio"/>
+		  				<input type="text" class="form-control" id="txtPrecio" placeholder="Precio" disabled/>
 		  			</div>
 		    	</div>
-		    	<div class="col s12 m2">
+		    	<div class="col s12 m3">
 		    		<div class="Seleccione el Producto">Bonificación</div>
 
 		  				<select  id="slcCantidad">
@@ -188,10 +192,11 @@
 		    		<div class="Seleccione el Producto">Cantidad</div>
 		    		<div class="input-group">
 		  				<input type="text" class="form-control" id="txtCantidad" placeholder="Cantidad"/>
+		  				<span style="display: none;" id="spanContTotArtPedido">0</span>
 		  			</div>
 		    	</div>
 
-		    	<div class="col s12 m2" style="margin-top: 23px">
+		    	<div class="col s12 m3" style="margin-top: 23px">
 		    		<button id="addProdDet" class="waves-effect waves-light external-button btn btn-small" style="width: 100%;">
 		    			<i class="material-icons">add_circle</i>
 		    		</button>
@@ -217,6 +222,13 @@
 	            <div style="text-align: right;"><span>SUB-TOTAL: C$</span> <span id="spanTotalPedido" >0.00</span></div>
 	            <div style="text-align: right;"><span>IVA: C$</span> <span id="spanIvaPedido" >0.00</span></div>
 	            <div style="text-align: right;"><span>TOTAL: C$</span> <span id="spanGranTotalPedido" >0.00</span></div>
+	            <div class="col s12 m12">
+		    		<div class="Seleccione el Producto">Comentarios</div>
+		    		<div class="input-group">
+			            <textarea id="comentariosPedido">
+			            </textarea>
+		        	</div>
+		        </div>
 
 
 			</div>
@@ -232,23 +244,23 @@
 
 <!--
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-												btnVerDetVnts	MODAL AGREGAR NUEVA VENTA
+												btnVerDetVnts	MODAL DETALLES DE PEDIDOS
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   -->
 <div id="ModalVerDetVnts" class="modal">
 	<div class="modal-content">
-	    <label class="totales">VISUALIZAR DETALLES DE TRANSACCIONES</label>
+	    <label class="totales">DETALLE DE PEDIDO</label>
 	    <div class="divider"></div><br>
 	    <div class="row">
 	    	<div class="col s12 m4">
-	    		<div class="Seleccione el Producto" style="font-weight: bolder;">Fecha de transacción</div>
+	    		<div class="Seleccione el Producto" style="font-weight: bolder;">Fecha de pedido</div>
 	    		<div class="input-group">
 	  				<div   id="txtVerFechaVnt" style="font-size: 1.3em">
 	  				</div>
 	  			</div>
 	    	</div>
 	    	<div class="col s12 m4">
-	    		<div class="Seleccione el Producto" style="font-weight: bolder;">Codigo de transacción</div>
+	    		<div class="Seleccione el Producto" style="font-weight: bolder;">Codigo de pedido</div>
 	    		<div class="input-group">
 	  				<div   id="txtVerCodVnt" style="font-size: 1.3em">
 	  				</div>
@@ -270,8 +282,9 @@
 		            <thead>
 	                    <tr>
 			            	<th>CODIGO</th>
-			                <th>PRODUCTO</th>
+			                <th>DESCRIPCION</th>
 			                <th>CANTIDAD</th>
+			                <th>BONIFICADO</th>
 			            </tr>
 	                </thead>        	
 			        <tfoot>

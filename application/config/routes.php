@@ -65,16 +65,17 @@ $route['cumplimiento'] = 'reportes_controller/rptCumplimiento';
 /*RUTA: VENTAS TERCEROS*/
 $route['ventas-terceros'] = 'ventasTerceros_controller';
 $route['listandoProductos'] = 'ventasTerceros_controller/listandoProductos';
-$route['AgregarNuevaVenta'] = 'ventasTerceros_controller/AgregarNuevaVenta';
-$route['AgregarDetalledeVenta'] = 'ventasTerceros_controller/AgregarDetalledeVenta';
-$route['UltimoRegistroVnts'] = 'ventasTerceros_controller/UltimoRegistroVnts';
-$route['getNewSellingData'] = 'ventasTerceros_controller/getNewSellingData';
-$route['getSelectedSellingDetailData/(:any)'] = 'ventasTerceros_controller/getSelectedSellingDetailData/$1';
-$route['cambiarEstadoVentas/(:any)/(:any)'] = 'ventasTerceros_controller/cambiarEstadoVentas/$1/$2';
+$route['AgregarNuevoPedido'] = 'ventasTerceros_controller/AgregarNuevoPedido';
+$route['AgregarDetalledePedido'] = 'ventasTerceros_controller/AgregarDetalledePedido';
+$route['LlenarDTPedidos'] = 'ventasTerceros_controller/LlenarDTPedidos';
+$route['LlenarTablaDetPedido/(:any)'] = 'ventasTerceros_controller/LlenarTablaDetPedido/$1';
+$route['cambiarEstadoPedido/(:any)/(:any)'] = 'ventasTerceros_controller/cambiarEstadoPedido/$1/$2';
 $route['NomUsuarioActual'] = 'ventasTerceros_controller/NomUsuarioActual';
-$route['filtrarxfechaCliente'] = 'ventasTerceros_controller/filtrarxfechaCliente';
+$route['filtrarxfechaPedidos'] = 'ventasTerceros_controller/filtrarxfechaPedidos';
 $route['listandoClientes'] =  'ventasTerceros_controller/listandoClientes/';
 $route['datosCreditoClte'] =  'ventasTerceros_controller/datosCreditoClte';
+$route['incremetarLlavePedido'] =  'ventasTerceros_controller/incremetarLlavePedido';
+
 
 $route['InfoCliente/(:any)'] = 'ventasTerceros_controller/getInfoCliente/$1';
 $route['InfoArticul/(:any)'] = 'ventasTerceros_controller/getInfoArticul/$1';

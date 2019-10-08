@@ -16,7 +16,7 @@ $(document).ready(function() {
         var Art  = $(this).val();
         $.getJSON('InfoArticul/' + Art, function(data){
             $("#txtPrecio").val(data['data'][0].PRE);
-            $("#txtCantidad").val(data['data'][0].EXI);
+            $("#txtExistencia").val(data['data'][0].EXI);
 
             var res = data['data'][0].REG;
             var select = $('#slcCantidad');
@@ -89,20 +89,26 @@ $(document).ready(function() {
           "search":     ""
         },
         columns: [
-                        { 'title': 'FECHA VENTA' },
-                        { 'title': 'CODIGO VENTA' },
+                        { 'title': 'FECHA' },
+                        { 'title': 'CODIGO' },
                         { 'title': 'CLIENTE' },
-                        { 'title': 'CONTACTO' },
+                        { 'title': 'COMENTARIO' },
                         { 'title': 'ESTADO' },
                         { 'title': 'OPCINOES' },
 
                     ],
          "columnDefs": [
-        {"className": "dt-center", "targets": "_all"}
+        {"className": "dt-center", "targets": "_all"},
+        { "width": "10%", "targets": 0 },
+        { "width": "10%", "targets": 1 },
+        { "width": "40%", "targets": 2 },
+        { "width": "20%", "targets": 3 },
+        { "width": "10%", "targets": 4 },
+        { "width": "10%", "targets": 5 }
       ],
       "createdRow":
       function( row, data, dataIndex){
-          if( data[4] == "ACTIVA"){
+          if( data[4] == "ACTIVO"){
               $(row).css('background-color', 'white');
 
 
@@ -121,7 +127,7 @@ $(document).ready(function() {
   inicializaControlFecha();
 
 
-  LlenarDTVentasTerceros();
+  LlenarDTPedidos();
   showNameUser();
 
 
@@ -134,14 +140,14 @@ $(document).ready(function() {
 
 
 $('#btnFiltroxfechaCLiente').click(function () {
-    filtrarxfechaCliente();
+    filtrarxfechaPedidos();
   });
 
 
 
 
 
-function filtrarxfechaCliente(){
+function filtrarxfechaPedidos(){
 
   objTable = $("#tblVtsTerceros").DataTable();
   objTable.rows().remove().draw( false );
@@ -155,34 +161,33 @@ function filtrarxfechaCliente(){
   };
 
   $.ajax({
-    url: "filtrarxfechaCliente",
+    url: "filtrarxfechaPedidos",
     type: "POST",
     data: form_data,
     success: function(res){
 
       var e = JSON.parse(res);
 
-       if(e.results[0].idVnts == null){
+       if(e.results[0].CLIENTE == null){
        }else{
 
         var estado;
 
-
         for (f=0;f<e.results.length;f++){
-          if (e.results[f].activoVnts==1){
-            estado =  "ACTIVA";
+          if (e.results[f].ESTADO==0){
+            estado =  "ACTIVO";
           }else{
-            estado =  "ANULADA";
+            estado =  "ANULADO";
 
           }
 
-         if (estado == "ANULADA"){
+         if (estado == "ANULADO"){
             objTable.row.add
          ( [
-              e.results[f].fechaVnts,
-              e.results[f].idVnts,
-              e.results[f].clienteVnts,
-              e.results[f].telClteVnts,
+              e.results[f].FECHA_CREADA,
+              e.results[f].IDPEDIDO,
+              e.results[f].NOMBRE,
+              e.results[f].COMENTARIO,
               estado,
               '<center><a href="#ModalVerDetVnts" id="btnVerDetVnts" class="noHover modal-trigger"><i class="material-icons">&#xE417;</i></a>&nbsp'
           ] ).draw( false )
@@ -190,10 +195,10 @@ function filtrarxfechaCliente(){
          }else{
           objTable.row.add
          ( [
-              e.results[f].fechaVnts,
-              e.results[f].idVnts,
-              e.results[f].clienteVnts,
-              e.results[f].telClteVnts,
+              e.results[f].FECHA_CREADA,
+              e.results[f].IDPEDIDO,
+              e.results[f].NOMBRE,
+              e.results[f].COMENTARIO,
               estado,
               '<center><a href="#ModalVerDetVnts" id="btnVerDetVnts" class="noHover modal-trigger"><i class="material-icons">&#xE417;</i></a>&nbsp'+
               '&nbsp<a href="#!" id="btnAnularVnts" class="Icono noHover"><i class="material-icons">highlight_off</i></a></center>'
@@ -301,174 +306,159 @@ function datosCreditoClte(codClte){//obtener datos de la tabla de SAC_DISP_CREDI
 //Llenar Data table registro por registro al persiona boton agregar
 $("#addProdDet").on('click', function(){
 
-
-  var partesIdProd = $("#productos").val().split(' - ');
-  var idProd = partesIdProd[0];
+var existencia = parseInt($("#txtExistencia").val().trim());
+  var cliente = $("#ListCliente").val();
+  var partesIdProd = $("#ListArticulo option:selected").text().split(' - ');
+  var idProd = $("#ListArticulo").val();
   var descProd =partesIdProd[1];
   var cantProd = $("#txtCantidad").val();
   var precioProd = $("#txtPrecio").val();
-  var bonifProd = $("#selectBonif").val();
-  
-
-
- 
-
-
-
-
-
-  totProd= parseFloat(cantProd) * parseFloat(precioProd);
+  var bonifProd = $("#slcCantidad").val();
+  var totProd = 0.00;  
+  var countArt = $("#spanContTotArtPedido").text();
+  var totProd = parseFloat(cantProd) * parseFloat(precioProd);
   
 
   Objtable = $("#tblDetVntTerceros").DataTable();
 
-  if(descProd == "" ||cantProd == ""){
-      Materialize.toast("El campo producto o el campo cantidad se encuentran vacio", 4000, 'rounded');
+  if (cliente="" || cliente == null) {
+    Materialize.toast("Seleccione un cliente", 4000, 'rounded');
+  }else if( idProd == null){
+      Materialize.toast("Seleccione un producto", 4000, 'rounded');
+
+  }else if(parseFloat(existencia)<0.0000 || existencia==""){
+    Materialize.toast("No hay producto en existencia", 4000, 'rounded');
+  }else if (cantProd == "" || cantProd == "0" || parseFloat(cantProd) > parseFloat(existencia)) {
+    Materialize.toast("El campo cantidad se encuentra vacio o es mayor a cantidad en existencia", 4000, 'rounded');
   }else{
 
      Objtable.row.add
       ( [
           idProd,
-          descProd,
+          descProd.trim(),
           cantProd,
           "C$"+precioProd,
           bonifProd,
-          totProd,
+          totProd.toFixed(4),
           '<a href="#!" id="RowDelete" class="BtnClose"><i class="material-icons">highlight_off</i></a>'
       ] ).draw( false );
+
+    var Total=0.00;
+    var lastTotal = parseFloat($("#spanTotalPedido").html());
+    if (lastTotal!=0) {
+      Total += lastTotal + (parseFloat(cantProd) * parseFloat(precioProd));
+    }else{
+      Total = parseFloat(cantProd) * parseFloat(precioProd);
     }
 
-  var Total=0.00;
-  var lastTotal = parseFloat($("#spanTotalPedido").html());
-  if (lastTotal!=0) {
-    Total += lastTotal + (parseFloat(cantProd) * parseFloat(precioProd));
-  }else{
-    Total = parseFloat(cantProd) * parseFloat(precioProd);
-  }
+    $("#spanContTotArtPedido").text(parseInt(countArt)+parseInt(cantProd));
   
-
-   /* var data = Objtable.rows().data();
-    longitudTabla=data.length;
-    var Total = Objtable.row(longitudTabla).column(5).data();// lee el dato de la ultima fila agregada en la columna 4 
-    var IVA = (parseFloat(Total[0])*0.15);
-    granTotal += IVA + parseFloat(Total[0]);*/
     var IVA = parseFloat(Total)*0.15;
     var granTotal = 0.00;
     granTotal = IVA + parseFloat(Total);
 
 
-    $("#spanTotalPedido").html(Total.toFixed(3));
-    $("#spanIvaPedido").html(IVA.toFixed(3));
-    $("#spanGranTotalPedido").html(granTotal.toFixed(3));
+    $("#spanTotalPedido").html(Total.toFixed(4));
+    $("#spanIvaPedido").html(IVA.toFixed(4));
+    $("#spanGranTotalPedido").html(granTotal.toFixed(4));
+    }
 
+});
 
-    $("#productos").val("");
-
-})
 
 //Accion que desencadena las funciones necesarioas para agregar Maestro y detalle de ventas en la base de datos
 $("#addNewVnt").on('click', function(){
 
-  var splitFecha = $("#txtFechaNewFact").val().split('-')
-  var fechaVnt = splitFecha[2]+"-"+splitFecha[1]+"-"+splitFecha[0]
-  var clienteVnts = $("#txtCLienteNewFact").val();
-  var contVnt = $("#txtContactNewFact").val();
+ 
+var partesClte = $("#ListCliente option:selected").text().split('-');
+  var idClte = partesClte[0];
+  var nomClte = partesClte[1];
+  var dirClte = $("#labelDirCrearPedido").html();
+  var limCredClte = $("#limitCredCrearPedido").html();
+  var saldoCredClte = $("#saldoCrearPedido").html();
+  var dispCredClte = $("#DispondCrearPedido").html();
+  var granTotal = parseFloat($("#spanGranTotalPedido").html());
+
+  var countArt= 0;
+
+  var comentVende = $("#comentariosPedido").val();
   var idRegVnts;
 
+   var Objtable1 = $("#tblDetVntTerceros").DataTable();
 
-
-   Objtable1 = $("#tblDetVntTerceros").DataTable();
-
-  if(fechaVnt == "" || clienteVnts == ""){
-      Materialize.toast("El campo fecha o el campo cliente se encuentran vacio", 4000, 'rounded');
+   countArt = Objtable1.rows().count();
+  if($("#ListArticulo").val() == ""){
+      Materialize.toast("Seleccione un cliente", 4000, 'rounded');
   }else{
 
     if( ! Objtable1.data().any()){
       Materialize.toast("Agregue productos a la tabla antes de guardar");
     }else{
 
+      alert(countArt);
+
 
 
     var regDatGeneralVnt = {
-      fechaVnt: fechaVnt,
-        clienteVnts: clienteVnts,
-        contVnt: contVnt
+        IDPEDIDO: "",
+        VENDEDOR: "",
+        CLIENTE: idClte.trim(),
+        NOMBRE: nomClte.trim(),
+        MONTO: granTotal,
+        COMENTARIO: comentVende.trim(),
+        countArt: countArt
       };
 
 
       $.ajax({
-      url: "AgregarNuevoPedido",
+        url: "AgregarNuevoPedido",
        type: "post",
-        dataType: "json",
         cache: false,
         async:false,
         data:regDatGeneralVnt,
-      success:function(resultado){
+        success:function(res){
+          var d = JSON.parse(res);
 
 
-        if(resultado==true){
-            //Llamado a funcion que busca ultimo id de ventas agregado por usuario, dentro de esta esta la funcion que llama a la funcion que agrega los detalles a la base de datos y agrega el id de ventas al que pertenece cada registro
-          BuscarUltimoRegistroVnts();
+          if(d.llave!=null){
+              //Llamado a funcion que busca ultimo id de ventas agregado por usuario, dentro de esta esta la funcion que llama a la funcion que agrega los detalles a la base de datos y agrega el id de ventas al que pertenece cada registro
+            AddDetallesVnts(d);
+            Objtable1.rows().remove().draw( false );
+              $("#tblDetVntTerceros").DataTable();
 
-          Objtable1.rows().remove().draw( false );
-            $("#tblDetVntTerceros").DataTable();
 
+             LlenarDTPedidos();
+          }
 
-            LlenarDTVentasTerceros();
         }
-
-      }
-    })
+      });
     }
-
   }
+});
 
-
-
-})
-
-
-//Buscar ultimo registro de venta agregado por usuario
-
-function BuscarUltimoRegistroVnts(){
-   $.ajax({
-      url: "UltimoRegistroVnts",
-      async:false,
-      success:function(idRegistro){
-        var e = JSON.parse(idRegistro);
-
-         // llamado a la funcion que agregar detalles de registros agregando en cada uno el id de ventas al que pertenecen
-        AddDetallesVnts(e[0].idVnts);
-      }
-    })
-
-}
 
 
 //Guardar Detalle de ventas en BD
-function AddDetallesVnts(idRegVnts){
+function AddDetallesVnts(d){
 
-  console.log(idRegVnts);
+  console.log(d.llave+", "+d.idPedido);
    Objtable = $("#tblDetVntTerceros").DataTable();
 
 
-    var regDatDetlVnt ={};
+    var regDatDetlPedido ={};
     var i = 0;
     Objtable.rows().data().each( function (index) {
-       regDatDetlVnt[i]={};
-        regDatDetlVnt[i]['idPedido'] = idRegVnts;
-        regDatDetlVnt[i]['idArt'] = index[0];
-        regDatDetlVnt[i]['descArt'] = index[1];
-        regDatDetlVnt[i]['cantArt'] = index[2];
-        regDatDetlVnt[i]['totalPedido'] = index[3];
-        regDatDetlVnt[i]['artBonif'] = index[4];
-        regDatDetlVnt[i]['ivaPedido'] = index[5];
-        regDatDetlVnt[i]['descPedido'] = index[6];   
+       regDatDetlPedido[i]={};
+        regDatDetlPedido[i]['idPedido'] = d.idPedido;
+        regDatDetlPedido[i]['idArt'] = index[0];
+        regDatDetlPedido[i]['descArt'] = index[1];
+        regDatDetlPedido[i]['cantArt'] = index[2];
+        regDatDetlPedido[i]['precioArt'] = index[3];
+        regDatDetlPedido[i]['bonifArt'] = index[4];
+        regDatDetlPedido[i]['totalArt'] = index[5];
         i++;
     });
 
-
-    console.log(regDatDetlVnt);
 
     $.ajax({
       url: "AgregarDetalledePedido",
@@ -476,14 +466,15 @@ function AddDetallesVnts(idRegVnts){
       dataType: "json",
       cache: false,
       async:false,
-      data:{data:regDatDetlVnt},
+      data:{data:regDatDetlPedido},
       success:function(res){
-        console.log(res);
 
         if(res==true){
 
+          incremetarLlavePedido(d.llave);
+
            swal({
-                    "text":"Venta Agregada",
+                    "text":"Pedido Agregado",
                     "type":"success",
                     "confirmButtonText":"ACEPTAR",
                     allowOutsideClick:false
@@ -495,7 +486,7 @@ function AddDetallesVnts(idRegVnts){
 
         }else{
           swal({
-                  "text":"Ocurrio un error al eliminar el registro",
+                  "text":"Ocurrio un error al Agregar el registro",
                   "type":"error",
                   "confirmButtonText":"ACEPTAR",
                   allowOutsideClick:false
@@ -509,13 +500,24 @@ function AddDetallesVnts(idRegVnts){
 
 }
 
+function incremetarLlavePedido(llave){
+
+   $.ajax({
+      url: "incremetarLlavePedido",
+      type: "post",
+      cache: false,
+      async:false,
+      data:{llave}
+    });
+}
+
 
 //LLenar datatable de ventas al ingresar nueva venta
-function LlenarDTVentasTerceros(){
+function LlenarDTPedidos(){
   objTable = $("#tblVtsTerceros").DataTable();
 
   $.ajax({
-    url:"getNewSellingData",
+    url:"LlenarDTPedidos",
     async:false,
     success:
     function(json){
@@ -526,25 +528,25 @@ function LlenarDTVentasTerceros(){
 
 
 
-       if(e.results[0].idVnts == null){
+       if(e.results[0].IDPEDIDO == null){
        }else{
 
-        var estado = "ACTIVA";
+        var estado = "ACTIVO";
         for (f=0;f<e.results.length;f++){
-          if (e.results[f].activoVnts==1){
-            estado =  "ACTIVA";
+          if (e.results[f].ESTADO==0){
+            estado =  "ACTIVO";
           }else{
-            estado =  "ANULADA";
+            estado =  "ANULADO";
 
           }
 
-          if (estado == "ANULADA"){
+          if (estado == "ANULADO"){
             objTable.row.add
          ( [
-              e.results[f].fechaVnts,
-              e.results[f].idVnts,
-              e.results[f].clienteVnts,
-              e.results[f].telClteVnts,
+              e.results[f].FECHA_CREADA,
+              e.results[f].IDPEDIDO,
+              e.results[f].NOMBRE,
+              e.results[f].COMENTARIO,
               estado,
               '<center><a href="#ModalVerDetVnts" id="btnVerDetVnts" class="noHover modal-trigger"><i class="material-icons">&#xE417;</i></a>&nbsp'
           ] ).draw( false )
@@ -552,10 +554,10 @@ function LlenarDTVentasTerceros(){
          }else{
           objTable.row.add
          ( [
-              e.results[f].fechaVnts,
-              e.results[f].idVnts,
-              e.results[f].clienteVnts,
-              e.results[f].telClteVnts,
+              e.results[f].FECHA_CREADA,
+              e.results[f].IDPEDIDO,
+              e.results[f].NOMBRE,
+              e.results[f].COMENTARIO,
               estado,
               '<center><a href="#ModalVerDetVnts" id="btnVerDetVnts" class="noHover modal-trigger"><i class="material-icons">&#xE417;</i></a>&nbsp'+
               '&nbsp<a href="#!" id="btnAnularVnts" class="Icono noHover"><i class="material-icons">highlight_off</i></a></center>'
@@ -584,7 +586,7 @@ $("#tblVtsTerceros").delegate("#btnAnularVnts","click", function(){
 
 
  swal({
-          title: '¿Realmente desea anular la transacción?',
+          title: '¿Realmente desea anular el pedido?',
           text: "este proceso no se podra revertir",
           type: 'warning',
           showCancelButton: true,
@@ -597,15 +599,15 @@ $("#tblVtsTerceros").delegate("#btnAnularVnts","click", function(){
           if (result.value) {
 
 
-             if(estadoAntes == "ACTIVA"){
-                estado= "ANULADA";
+             if(estadoAntes == "ACTIVO"){
+                estado= "ANULADO";
              }else{
-                estado= "ACTIVA";
+                estado= "ACTIVO";
              }
              console.log(codVenta+", "+estado);
 
              $.ajax({
-              url:"cambiarEstadoVentas/"+codVenta+"/"+estado,
+              url:"cambiarEstadoPedido/"+codVenta+"/"+estado,
               cache: false,
               async:true
              });
@@ -637,26 +639,26 @@ $("#tblVtsTerceros").delegate("#btnVerDetVnts","click", function(){
 
    tdItems= $('#tblVtsTerceros').DataTable().rows($(this).parents("tr")).data();
    fechaVenta =tdItems[0][0];
-   codVenta =tdItems[0][1];
+   codPedido =tdItems[0][1];
     nomCliente=tdItems[0][2];
 
 
   $('#txtVerFechaVnt').html(fechaVenta);
-    $('#txtVerCodVnt').html(codVenta);
+    $('#txtVerCodVnt').html(codPedido);
     $('#txtVerNomClteVnt').html(nomCliente);
 
-  LlenarTablaVerDetVnts(codVenta);
+  LlenarTablaDetPedido(codPedido);
 
 });
 
-function LlenarTablaVerDetVnts(codVenta){
+function LlenarTablaDetPedido(codPedido){
 
   objTable = $("#tblVerDetVntTerceros").DataTable();
 
-  var codVnts = codVenta;
+  var codVnts = codPedido;
 
   $.ajax({
-    url:"getSelectedSellingDetailData/"+codVenta,
+    url:"LlenarTablaDetPedido/"+codPedido,
     cache: false,
     async:true,
 
@@ -669,9 +671,10 @@ function LlenarTablaVerDetVnts(codVenta){
 
        objTable.row.add
        ( [
-            e.results[f].idArt,
-            e.results[f].descDetArtVnts,
-            e.results[f].cantDetVnts
+            e.results[f].ARTICULO,
+            e.results[f].DESCRIPCION,
+            e.results[f].CANTIDAD,
+            e.results[f].BONIFICADO
         ] ).draw( false )
 
       }
@@ -690,17 +693,14 @@ $('#tblDetVntTerceros').on('click', '#RowDelete', function(){
   var TotalFila = 0.00;
   var table = $('#tblDetVntTerceros').DataTable();
 
-   tdItem = table.rows($(this).parents('tr')).data();// lee  datos de la tabla 
-   TotalFila = tdItem[0][5];// toma el valor de la columna total
+ 
+
+  tdItem = table.rows($(this).parents('tr')).data();// lee  datos de la tabla 
+  TotalFila = tdItem[0][5];// toma el valor de la columna total
   table.row( $(this).parents('tr') ).remove().draw();// remueve la fila
-  console.log(TotalFila);
+  
 
-
-    if ( ! table.data().any() ) {
-    Materialize.toast("La tabla se encuentra vacia", 4000, 'rounded');
-  }else{
-   
-    var Total = parseFloat($("#spanTotalPedido").html()) - parseFloat(TotalFila);
+   var Total = parseFloat($("#spanTotalPedido").html()) - parseFloat(TotalFila);
 
     var IVA = parseFloat(Total)*0.15;
     granTotal = IVA + parseFloat(Total);
@@ -709,10 +709,10 @@ $('#tblDetVntTerceros').on('click', '#RowDelete', function(){
     $("#spanTotalPedido").html(Total.toFixed(3));
     $("#spanIvaPedido").html(IVA.toFixed(3));
     $("#spanGranTotalPedido").html(granTotal.toFixed(3));
+
+    if ( ! table.data().any() ) {
+    Materialize.toast("La tabla se encuentra vacia", 4000, 'rounded');
   }
-
-
-
 });
 
 
