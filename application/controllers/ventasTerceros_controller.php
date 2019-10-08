@@ -36,12 +36,12 @@ class VentasTerceros_controller extends CI_Controller {
 		 $this->ventasTerceros_model->NomUsuarioActual($iduser);
 
     }
-    public function filtrarxfechaCliente(){
+    public function filtrarxfechaPedidos(){
     		$data= array(
 	            'desde' => $this->input->post('desde'),
 	            'hasta' => $this->input->post('hasta')
 	        );
-    	$this->ventasTerceros_model->filtrarxfechaCliente($data);
+    	$this->ventasTerceros_model->filtrarxfechaPedidos($data);
     }
 
 
@@ -71,21 +71,27 @@ class VentasTerceros_controller extends CI_Controller {
 
 
 	 public function AgregarNuevoPedido(){
-	 	$data= array(
-	            'idPedido' => $this->input->post('idPedido'),
-	            'idVendedor' => $this->input->post('idVendedor'),
-	            'idCliente' => $this->input->post('idCliente'),
-	            'NombreClte' => $this->session->userdata('NombreClte'),
-	            'monto' => $this->input->post('monto'),
-	            'comentario' => $this->input->post('comentario'),
-	            'cantArt' => $this->input->post('cantArt'),
-	            'comentConfirm' => $this->session->userdata('comentConfirm')
-	            
+	 	$varKey = $this->ventasTerceros_model->getKeyPedido($this->session->userdata('usuario'));
+	 	if ($varKey<1) {
+	 		echo false;
+	 	}else{
+
+	 		
+	 		$data= array(
+	 			'llave' =>$varKey,
+	            'idPedido' => $this->session->userdata('usuario')."P".date('dmy').$varKey,
+	            'idVendedor' => $this->session->userdata('usuario'),
+	            'idCliente' => $this->input->post('CLIENTE'),
+	            'NombreClte' => $this->input->post('NOMBRE'),
+	            'monto' => $this->input->post('MONTO'),
+	            'comentario' => $this->input->post('COMENTARIO'),
+	            'countArt' => $this->input->post('countArt')
 	        );
 
 	 	$this->ventasTerceros_model->AgregarNuevoPedido($data);
+	 	}
+	 	
 	 }
-
 
 
 	 public function AgregarDetalledePedido(){
@@ -93,23 +99,34 @@ class VentasTerceros_controller extends CI_Controller {
 	 	$this->ventasTerceros_model->AgregarDetalledePedido($data);
 	 }
 
-	public function getNewSellingData(){
+	 public function incremetarLlavePedido(){
+	 	$data = array(
+	 	'llave' => $this->input->post('llave'),
+	 	'idUser' => $this->session->userdata('usuario')
+	 	);
+	 	
+	 	$this->ventasTerceros_model->incremetarLlavePedido($data);
+	 }
+
+	public function LlenarDTPedidos(){
 		$idUser = $this->session->userdata('usuario');
-		$this->ventasTerceros_model->getNewSellingData($idUser);
-		//echo "aqui vamos";
+		$this->ventasTerceros_model->LlenarDTPedidos($idUser);
+		
 
 	}
 
-	public function getSelectedSellingDetailData($cod){
+	public function LlenarTablaDetPedido($cod){
 		
-		$this->ventasTerceros_model->getSelectedSellingDetailData($cod);
+		$this->ventasTerceros_model->LlenarTablaDetPedido($cod);
 
 	}
 
 
-	public function cambiarEstadoVentas($cod, $estado){
+	public function cambiarEstadoPedido($cod, $estado){
+
+		echo ($cod.", ". $estado);
 		
-		$this->ventasTerceros_model->cambiarEstadoVentas($cod, $estado);
+		$this->ventasTerceros_model->cambiarEstadoPedido($cod, $estado);
 	}
 
 

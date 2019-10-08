@@ -9,11 +9,11 @@ class VentasTerceros_model extends CI_Model {
 
     public function NomUsuarioActual($iduser){
      $this->db->select('Nombre_visitador');
-            $this->db->from("usuarios");
-            $this->db->where("Usuario",$iduser);
-            $query = $this->db->get();
-            $resultado = $query->result_array();
-            echo json_encode($resultado);
+    $this->db->from("usuarios");
+    $this->db->where("Usuario",$iduser);
+    $query = $this->db->get();
+    $resultado = $query->result_array();
+    echo json_encode($resultado);
     }
     public function getAllArticulos()
     {
@@ -23,6 +23,9 @@ class VentasTerceros_model extends CI_Model {
         }
         $this->sqlsrv->close();
     }
+
+
+    
     public function getAllClientes($iD)
     {
 
@@ -143,12 +146,13 @@ class VentasTerceros_model extends CI_Model {
 
 
 
-    public function filtrarxfechaCliente($data){
+    public function filtrarxfechaPedidos($data){
+
         $iduser = $this->session->userdata('usuario');
         $this->db->select('*');
-            $this->db->from("ventas_terceros");
-            $this->db->where("idUserRegVnts",$iduser);
-            $this->db->where('fechaVnts BETWEEN "'.date('Y-m-d', strtotime($data['desde'])).'" AND "'.date('Y-m-d', strtotime($data['hasta'])).'"');
+            $this->db->from('pedido');
+            $this->db->where('VENDEDOR',$iduser);
+            $this->db->where('FECHA_CREADA BETWEEN "'.date('Y-m-d', strtotime($data['desde'])).'" AND "'.date('Y-m-d 23:59:00', strtotime($data['hasta'])).'"');
             
 
 
@@ -161,11 +165,12 @@ class VentasTerceros_model extends CI_Model {
                  $i=0;
                 
                 foreach($resultado as $fila){
-                    $json["results"][$i]["fechaVnts"] = date_format(date_create($fila["fechaVnts"]),'d-m-Y');
-                    $json["results"][$i]["idVnts"] = $fila["idVnts"];
-                    $json["results"][$i]["clienteVnts"] = $fila["clienteVnts"];
-                    $json["results"][$i]["telClteVnts"] = $fila["telClteVnts"];
-                    $json["results"][$i]["activoVnts"] = $fila["activoVnts"];
+                    $json["results"][$i]["FECHA_CREADA"] = date_format(date_create($fila["FECHA_CREADA"]),'d-m-Y');
+                    $json["results"][$i]["IDPEDIDO"] = $fila["IDPEDIDO"];
+                    $json["results"][$i]["CLIENTE"] = $fila["CLIENTE"];
+                    $json["results"][$i]["NOMBRE"] = $fila["NOMBRE"];
+                    $json["results"][$i]["COMENTARIO"] = $fila["COMENTARIO"];
+                    $json["results"][$i]["ESTADO"] = $fila["ESTADO"];
                     $i++;
                 }
             }else{
@@ -179,50 +184,67 @@ class VentasTerceros_model extends CI_Model {
     }
 
 
+    public function  getKeyPedido($idRuta){
+        $this->db->select('PEDIDO');
+        $this->db->from("llaves");
+        $this->db->where("RUTA",$idRuta);
+        $query = $this->db->get();
+
+        if( $query->num_rows() > 0) {
+            $resultado = $query->result_array();
+            return intval($resultado[0]["PEDIDO"])+1;
+        }
+
+    }
+
 
     public function AgregarNuevoPedido($data){
+        $jsonData = array();
 
-          $query = $this->db->insert('pedido',array('IDPEDIDO'=>$data['idPedido'],'VENDEDOR'=> $data['idVendedor'],'RESPONSABLE'=> $data['idResponsable'],'CLIENTE'=> $data['idCliente'],'NOMBRE'=> $data['NombreClte'],'MONTO'=> $data['monto'],'ESTADO'=> 0,'FECHA_CREADA'=> NOW(),'COMENTARIO'=> $data['comentario'].'['. $data['cantArt'].' Articulos','COMENTARIO_CONFIRM'=> $data['comentConfirm']));
+          $query = $this->db->insert('pedido',array('IDPEDIDO'=>$data['idPedido'],'VENDEDOR'=> $data['idVendedor'],'CLIENTE'=> $data['idCliente'],'NOMBRE'=> $data['NombreClte'],'MONTO'=> $data['monto'],'ESTADO'=> 0,'FECHA_CREADA'=> date('Y-m-d H:i:s'),'COMENTARIO'=> $data['comentario'].' ['.$data['countArt'].' Articulos]'));
           
 
         if ($query) {
-           echo true;     
+            $jsonData['idPedido'] = $data['idPedido'];
+            $jsonData['llave'] = $data['llave'];
+
+           echo json_encode($jsonData);     
         } else {
             echo false;
         }
 
      }
 
-    public function UltimoRegistroVnts($idUser){
-        $this->db->select_max('idVnts');
-        $this->db->from("ventas_terceros");
-        $this->db->where("idUserRegVnts",$idUser);
-        $query = $this->db->get();
-        $resultado = $query->result_array();
-        $this->db->close();
-        echo json_encode($resultado);   
-     }
-
 
     public function AgregarDetalledePedido($data){
 
         foreach ($data as $key=>$value){
-        $query = $this->db->insert('pedido_detalle',array('IDPEDIDO'=> $value['idPedido'], 'ARTICULO' => $value['idArt'], 'DESCRIPCION' => $value['descArt'],'CANTIDAD' => $value['cantArt'], 'TOTAL'=> $value['totalPedido'], 'BONIFICADO' => $value['artBonif'], 'IVA' => $value['ivaPedido'],'DESCUENTO' => $value['descPedido']) );
+        $query = $this->db->insert('pedido_detalle',array('IDPEDIDO'=> $value['idPedido'], 'ARTICULO' => $value['idArt'], 'DESCRIPCION' => $value['descArt'],'CANTIDAD' => $value['cantArt'], 'TOTAL'=> $value['totalArt'], 'BONIFICADO' => $value['bonifArt'], 'IVA' => $value['totalArt']*0.15) );
         }
+            
 
          if ($query) {
             echo true;
          }else{
             echo false;
          }
-      
+
+        $this->db->close();
+
    }
 
-    public function getNewSellingData($idUser){
+
+    public function incremetarLlavePedido($data){
+        $this->db->where('RUTA',$data['idUser']);
+        $this->db->update('llaves',array('PEDIDO' => $data['llave']));
+        $this->db->close();
+     }
+
+    public function LlenarDTPedidos($idUser){
 
          $this->db->select('*');
-        $this->db->from("ventas_terceros");
-        $this->db->where("idUserRegVnts",$idUser);
+        $this->db->from("pedido");
+        $this->db->where("VENDEDOR",$idUser);
 
         $query = $this->db->get();
 
@@ -233,11 +255,12 @@ class VentasTerceros_model extends CI_Model {
                  $i=0;
                 
                 foreach($resultado as $fila){
-                    $json["results"][$i]["fechaVnts"] = date_format(date_create($fila["fechaVnts"]),'d-m-Y');
-                    $json["results"][$i]["idVnts"] = $fila["idVnts"];
-                    $json["results"][$i]["clienteVnts"] = $fila["clienteVnts"];
-                    $json["results"][$i]["telClteVnts"] = $fila["telClteVnts"];
-                    $json["results"][$i]["activoVnts"] = $fila["activoVnts"];
+                    $json["results"][$i]["FECHA_CREADA"] = date_format(date_create($fila["FECHA_CREADA"]),'d-m-Y');
+                    $json["results"][$i]["IDPEDIDO"] = $fila["IDPEDIDO"];
+                    $json["results"][$i]["NOMBRE"] = $fila["NOMBRE"];
+                    $json["results"][$i]["MONTO"] = $fila["MONTO"];
+                    $json["results"][$i]["COMENTARIO"] = $fila["COMENTARIO"];
+                    $json["results"][$i]["ESTADO"] = $fila["ESTADO"];
                     $i++;
                 }
             }else{
@@ -249,10 +272,10 @@ class VentasTerceros_model extends CI_Model {
    }
 
 
-   public function getSelectedSellingDetailData($cod){
+   public function LlenarTablaDetPedido($cod){
         $this->db->select("*");
-        $this->db->from("ventas_detalles_terceros");
-        $this->db->where("idVnts",$cod);
+        $this->db->from("pedido_detalle");
+        $this->db->where("IDPEDIDO",$cod);
         $query = $this->db->get();
 
         $json = array();
@@ -262,9 +285,10 @@ class VentasTerceros_model extends CI_Model {
                  $i=0;
                 
                 foreach($resultado as $fila){
-                    $json["results"][$i]["idArt"] = $fila["idArt"];
-                    $json["results"][$i]["descDetArtVnts"] = $fila["descDetArtVnts"];
-                    $json["results"][$i]["cantDetVnts"] = $fila["cantDetVnts"];
+                    $json["results"][$i]["ARTICULO"] = $fila["ARTICULO"];
+                    $json["results"][$i]["DESCRIPCION"] = $fila["DESCRIPCION"];
+                    $json["results"][$i]["CANTIDAD"] = $fila["CANTIDAD"];
+                    $json["results"][$i]["BONIFICADO"] = $fila["BONIFICADO"];
                     $i++;
                 }
             }else{
@@ -275,18 +299,18 @@ class VentasTerceros_model extends CI_Model {
 
    }
 
-   public function cambiarEstadoVentas($cod, $estado){
+   public function cambiarEstadoPedido($cod, $estado){
     
 
     if($estado == "ACTIVA"){
-        $estadoBit = 1;
-    }else{
         $estadoBit = 0;
+    }else{
+        $estadoBit = 1;
     }
 
     echo ($estadoBit);
 
-    $this->db->query("UPDATE ventas_terceros SET activoVnts ='". $estadoBit."' WHERE idVnts = ".$cod);
+    $this->db->query("UPDATE pedido SET ESTADO ='". $estadoBit."' WHERE IDPEDIDO = '".$cod."'");
   
 
    }
